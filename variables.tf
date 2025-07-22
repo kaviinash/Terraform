@@ -1,5 +1,5 @@
 variable "name" {
-    default = "rg1"
+    default = "avinash_devopsrg"
   
 }
 variable "location" {
