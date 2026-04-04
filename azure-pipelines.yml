@@ -18,5 +18,16 @@ stages:
         backendAzureRmStorageAccountName: 'backendstgaviinash'
         backendAzureRmContainerName: 'terraform-backend'
         backendAzureRmKey: 'prod.tfstate'
-
+- stage: B
+  displayName: stage2 
+  pool: Default
+  dependsOn: A
+  jobs: 
+  - job: 
+    steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: 'svn'
 
