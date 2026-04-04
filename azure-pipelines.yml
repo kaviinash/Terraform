@@ -19,6 +19,7 @@ stages:
         backendAzureRmContainerName: 'terraform-backend'
         backendAzureRmKey: 'terraform.tfstate'
     - task: TerraformTaskV4@4
+      name: terraform_plan
       inputs:
         provider: 'azurerm'
         command: 'plan'
