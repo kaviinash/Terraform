@@ -7,9 +7,10 @@ stages:
   displayName: stage1
   pool: Default
   jobs: 
-  - job: Terraform_init
+  - job: Terraform
     steps:
     - task: TerraformTaskV4@4
+      displayName: Terraform Init
       inputs:
         provider: 'azurerm'
         command: 'init'
@@ -19,7 +20,7 @@ stages:
         backendAzureRmContainerName: 'terraform-backend'
         backendAzureRmKey: 'terraform.tfstate'
     - task: TerraformTaskV4@4
-      name: terraform_plan
+      displayName: Terraform plan
       inputs:
         provider: 'azurerm'
         command: 'plan'
