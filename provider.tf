@@ -1,8 +1,15 @@
 terraform {
   required_providers {
-     backend "azurerm"{
     azurerm = {
-
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
     }
   }
+
+  backend "azurerm" {
+
+}
+
+provider "azurerm" {
+  features {}
 }
