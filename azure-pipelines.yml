@@ -15,7 +15,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendServiceArm: 'svn'
+        backendServiceArm: 'SVB'
         backendAzureRmResourceGroupName: 'backend-rg'
         backendAzureRmStorageAccountName: 'backendstgaviinash'
         backendAzureRmContainerName: 'terraform-backend'
