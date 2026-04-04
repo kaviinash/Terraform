@@ -1,5 +1,5 @@
 trigger: none
-name: Terraform
+name: Terraform Deployment
 pool: Default
 
 stages:
@@ -7,7 +7,7 @@ stages:
   displayName: stage1
   pool: Default
   jobs: 
-  - job: A
+  - job: Terraform_init
     steps:
     - task: TerraformTaskV4@4
       inputs:
@@ -18,4 +18,8 @@ stages:
         backendAzureRmStorageAccountName: 'backendstgaviinash'
         backendAzureRmContainerName: 'terraform-backend'
         backendAzureRmKey: 'terraform.tfstate'
-
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: 'SVB'
