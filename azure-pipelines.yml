@@ -1,5 +1,5 @@
 trigger: none
-
+name: Terraform
 pool: Default
 
 stages:
