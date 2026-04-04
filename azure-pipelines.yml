@@ -19,9 +19,6 @@ stages:
         backendAzureRmStorageAccountName: 'backendstgaviinash'
         backendAzureRmContainerName: 'terraform-backend'
         backendAzureRmKey: 'prod.tfstate'
-  - job: 
-    dependsOn: A
-    steps:
     - task: TerraformTask@5
       inputs:
         provider: 'azurerm'
