@@ -7,7 +7,8 @@ stages:
   displayName: stage1
   pool: Default
   jobs: 
-  - job: 
+  - job: A
+    displayName: Terraform init
     steps: 
     - task: TerraformTask@5
       inputs:
@@ -18,12 +19,8 @@ stages:
         backendAzureRmStorageAccountName: 'backendstgaviinash'
         backendAzureRmContainerName: 'terraform-backend'
         backendAzureRmKey: 'prod.tfstate'
-- stage: B
-  displayName: stage2 
-  pool: Default
-  dependsOn: A
-  jobs: 
   - job: 
+    dependsOn: A
     steps:
     - task: TerraformTask@5
       inputs:
