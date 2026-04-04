@@ -17,5 +17,14 @@ stages:
         scriptLocation: inlineScript
         inlineScript: |
           az account show
-
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'SVB'
+        environmentServiceNameAzureRM: 'SVB'   # 👈 MUST HAVE
+        backendAzureRmResourceGroupName: 'backend-rg'
+        backendAzureRmStorageAccountName: 'backendstgaviinash'
+        backendAzureRmContainerName: 'terraform-backend'
+        backendAzureRmKey: 'terraform.tfstate'
 
