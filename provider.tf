@@ -9,11 +9,4 @@ terraform {
   }
 }
 
-provider "azurerm" {
-    subscription_id = ""
-    features {
-      
-    }
 
-  # Configuration options
-}
