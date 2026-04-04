@@ -10,14 +10,14 @@ stages:
   - job: A
     displayName: Terraform init
     steps: 
-    - bash: az account show
     - task: TerraformTask@5
       inputs:
         provider: 'azurerm'
         command: 'init'
+        backendAzureRmUseEntraIdForAuthentication: false
         backendServiceArm: 'SVB'
         backendAzureRmResourceGroupName: 'backend-rg'
         backendAzureRmStorageAccountName: 'backendstgaviinash'
         backendAzureRmContainerName: 'terraform-backend'
-        backendAzureRmKey: 'prod.tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
 
