@@ -8,21 +8,12 @@ stages:
   pool: Default
   jobs: 
   - job: A
-    displayName: Terraform init
-    steps: 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'SVB'
-        scriptType: ps
-        scriptLocation: inlineScript
-        inlineScript: |
-          az account show
+    steps:
     - task: TerraformTask@5
       inputs:
         provider: 'azurerm'
         command: 'init'
         backendServiceArm: 'SVB'
-        environmentServiceNameAzureRM: 'SVB'   # 👈 MUST HAVE
         backendAzureRmResourceGroupName: 'backend-rg'
         backendAzureRmStorageAccountName: 'backendstgaviinash'
         backendAzureRmContainerName: 'terraform-backend'
