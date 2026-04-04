@@ -9,7 +9,7 @@ stages:
   jobs: 
   - job: A
     steps:
-    - task: TerraformTask@5
+    - task: TerraformTaskV4@4
       inputs:
         provider: 'azurerm'
         command: 'init'
