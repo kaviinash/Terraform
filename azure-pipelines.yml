@@ -10,6 +10,44 @@ trigger:
     exclude:
       - '**/*.md'
       - '**/*.txt'
+pr: 
+  branches:
+    include:
+      - main
+####################### Parameters - are a way to pass runtime inputs ####################
+parameters:
+  - name: enviroment
+    displayName: 'enviroment'
+    default: dev
+    values:
+      - staging
+      - dev 
+      - prod
+
+  - name: action
+    displayName: 'terraform action'
+    type: string
+    values:
+      - plan
+      - apply
+      - destory
+    default: plan
+  
+  - name: terraformversion
+    displayName: 'terrform version'
+    type: string
+    default: "3.0"
+
+  - name: costanalysis
+    displayName: 'cost analysis (Infracost)'
+    type: boolean
+    default: true
+  
+  - name:  forceapply
+    displayName: 'force apply skip approval gate'
+    type: boolean
+    default: false
+
 
 pool: Default
 
