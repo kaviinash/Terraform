@@ -14,7 +14,8 @@ pr:
   branches:
     include:
       - main
-####################### Parameters - are a way to pass runtime inputs ####################
+#Parameters - are a way to pass runtime inputs 
+#Parameters are typed values defined at the top of your YAML pipeline that are evaluated at compile time (before the run starts).#
 parameters:
   - name: enviroment
     displayName: 'enviroment'
@@ -48,8 +49,14 @@ parameters:
     type: boolean
     default: false
 
-
-pool: Default
+variables:
+  tf_version: ${{parameters.terraformversion}} 
+  tf_working_dir: $(System.DefaultWorkingDirectory)
+  tf_backend_rg: 'backend-rg'
+  tf_backend_storage: 'backendstgaviinash'$(Build.Repository.Name)
+  tf_backend_container: 'terraform-backend'
+pool:
+   name: Default
 
 stages:
 - stage: A
