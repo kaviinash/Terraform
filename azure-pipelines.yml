@@ -50,11 +50,21 @@ parameters:
     default: false
 
 variables:
-  tf_version: ${{parameters.terraformversion}} 
+  # Global Variables
+  tf_version: ${{ parameters.terraformversion }} 
   tf_working_dir: $(System.DefaultWorkingDirectory)
   tf_backend_rg: 'backend-rg'
   tf_backend_storage: 'backendstgaviinash'$(Build.Repository.Name)
-  tf_backend_container: 'terraform-backend'
+  tf_backend_key: ${{ parameters.enviroment }}/terraform.tfstate
+  artifact_name: 'terraform-plan-${{ parameters.enviroment }}'
+  
+  ${{ if (parameters.enviroment, 'dev') }}:
+    env_variable_group: 'vg-terraform-dev'
+    tf_workspace: 'dev'
+    
+
+
+
 pool:
    name: Default
 
