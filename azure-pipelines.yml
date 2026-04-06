@@ -1,5 +1,5 @@
 trigger: none
-name: Terraform Deployment-$(Build.BuildNumber)-$(Build.BuildId)
+name: Terraform Deployment-$(Build.SourceBranchName)-$(Build.BuildId)
 pool: Default
 
 stages:
