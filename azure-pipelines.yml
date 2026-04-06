@@ -1,5 +1,16 @@
-trigger: none
 name: Terraform Deployment-$(Build.SourceBranchName)-$(Build.BuildId)
+
+trigger:
+  branches:
+    include:
+      - main
+    exclude:
+      - dev
+  paths:
+    exclude:
+      - '**/*.md'
+      - '**/*.txt'
+
 pool: Default
 
 stages:
