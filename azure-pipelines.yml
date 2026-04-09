@@ -12,6 +12,9 @@ trigger:
       - '**/*.txt'
 pool: Default
 
+variables:
+  - group: finOps
+    
 stages:
 - stage: A
   displayName: stage1
