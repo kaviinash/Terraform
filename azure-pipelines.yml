@@ -14,6 +14,7 @@ pool: Default
 
 variables:
   - group: INFRACOST_API_KEY
+
     
 stages:
 - stage: Validate
@@ -48,4 +49,19 @@ stages:
           $env:INFRACOST_API_KEY = "$(Infracostapitoken)"
           .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)' --format table
 
+- stage: Apply
+  dependsOn:
+    - Validate
+  pool: Default
+  displayName: 'Terraform Apply'
+  jobs:
+    - job:
+      steps:
+      - task: TerraformTask@5
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          commandOptions: '--auto-approve'
+ 
+ 
        
