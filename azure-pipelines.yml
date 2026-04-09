@@ -110,6 +110,7 @@ stages:
             targetPath: '$(Pipeline.Workspace)'
         - task: TerraformTask@5
           inputs:
+            environmentServiceNameAzureRM: 'SVB'
             provider: 'azurerm'
             command: 'apply'
             commandOptions: '-auto-approve tfplan'
