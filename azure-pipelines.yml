@@ -46,6 +46,6 @@ stages:
           tar -xvf infracost.tar.gz
           .\infracost.exe --version
           $env:INFRACOST_API_KEY = "$(Infracostapitoken)"
-          .\infracost.exe breakdown --path '$(WORK_DIR)' --format table
+          .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)' --format table
 
        
