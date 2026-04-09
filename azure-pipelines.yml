@@ -70,7 +70,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             environmentServiceNameAzureRM: 'SVB'
-            commandOptions: '-out=tfplan'
+            commandOptions: '-out=$(Pipeline.Workspace)/plans/tfplanfile'
         - task: PowerShell@2
           displayName: Run Infracost
           inputs:
@@ -84,7 +84,7 @@ stages:
       # Save plan as artifact
         - task: PublishPipelineArtifact@1
           inputs:
-            targetPath: '$(Pipeline.Workspace)/tfplan'
+            targetPath: '$(Pipeline.Workspace)/plans'
             artifact: 'tfplan'
 
 
@@ -103,10 +103,10 @@ stages:
           inputs:
             buildType: 'current'
             artifactName: 'tfplan'
-            targetPath: '$(Pipeline.Workspace)/tfplan'
+            targetPath: '$(Pipeline.Workspace)/plans'
         - task: TerraformTask@5
           inputs:
             environmentServiceNameAzureRM: 'SVB'
             provider: 'azurerm'
             command: 'apply'
-            commandOptions: '-auto-approve tfplan'
+            commandOptions: '-auto-approve $(Pipeline.Workspace)/plans/tfplanfile'
