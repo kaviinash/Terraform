@@ -10,58 +10,106 @@ trigger:
     exclude:
       - '**/*.md'
       - '**/*.txt'
+
 pool: Default
 
 variables:
   - group: INFRACOST_API_KEY
 
-    
 stages:
-- stage: Validate
-  displayName: 'Validate and Security Scan'
-  pool: Default
-  jobs: 
-  - job: Terraform
-    steps:
-    - task: TerraformTaskV4@4
-      displayName: Terraform Init
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        backendServiceArm: 'SVB'
-        backendAzureRmResourceGroupName: 'backend-rg'
-        backendAzureRmStorageAccountName: 'backendstgaviinash'
-        backendAzureRmContainerName: 'terraform-backend'
-        backendAzureRmKey: 'terraform.tfstate'
-    - task: TerraformTaskV4@4
-      displayName: Terraform plan
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        environmentServiceNameAzureRM: 'SVB'
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          Invoke-WebRequest https://github.com/infracost/infracost/releases/latest/download/infracost-windows-amd64.tar.gz -OutFile infracost.tar.gz
-          tar -xvf infracost.tar.gz
-          .\infracost.exe --version
-          $env:INFRACOST_API_KEY = "$(Infracostapitoken)"
-          .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)' --format table
 
-- stage: Apply
-  dependsOn:
-    - Validate
-  pool: Default
-  displayName: 'Terraform Apply'
+# -------------------
+# Stage 1: Validate
+# -------------------
+- stage: Validate
+  displayName: 'Validate Terraform and Security Scan'
   jobs:
-    - job:
+    - job: TerraformValidate
+      displayName: 'Terraform Init & Validate'
       steps:
-      - task: TerraformTask@5
-        inputs:
-          provider: 'azurerm'
-          command: 'apply'
-          commandOptions: '--auto-approve'
- 
- 
-       
+        - task: TerraformTaskV4@4
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'SVB'
+            backendAzureRmResourceGroupName: 'backend-rg'
+            backendAzureRmStorageAccountName: 'backendstgaviinash'
+            backendAzureRmContainerName: 'terraform-backend'
+            backendAzureRmKey: 'terraform.tfstate'
+        - task: TerraformTaskV4@4
+          displayName: Terraform Validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+
+# -------------------
+# Stage 2: Plan & Cost
+# -------------------
+- stage: Plan
+  displayName: 'Terraform Plan and Infracost'
+  dependsOn: Validate
+  jobs:
+    - job: TerraformPlan
+      displayName: 'Terraform Plan + Infracost'
+      steps:
+        - task: TerraformTaskV4@4
+          displayName: Terraform Plan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            environmentServiceNameAzureRM: 'SVB'
+            commandOptions: '-out=tfplan'
+        - task: PowerShell@2
+          displayName: Run Infracost
+          inputs:
+            targetType: 'inline'
+            script: |
+              Invoke-WebRequest https://github.com/infracost/infracost/releases/latest/download/infracost-windows-amd64.tar.gz -OutFile infracost.tar.gz
+              tar -xvf infracost.tar.gz
+              .\infracost.exe --version
+              $env:INFRACOST_API_KEY = "$(Infracostapitoken)"
+              .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)' --format table
+      # Save plan as artifact
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
+            artifact: 'tfplan'
+
+# -------------------
+# Stage 3: Approval
+# -------------------
+- stage: Approval
+  displayName: 'Manual Approval Before Apply'
+  dependsOn: Plan
+  jobs:
+    - job: ApprovalGate
+      displayName: 'Approval'
+      steps:
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: 'aviinashdevops@outlook.com'
+            instructions: 'Approve to apply Terraform changes'
+            onTimeout: 'reject'
+            timeout: '43200'  # 12 hours max
+
+# -------------------
+# Stage 4: Apply
+# -------------------
+- stage: Apply
+  displayName: 'Terraform Apply'
+  dependsOn: Approval
+  jobs:
+    - job: TerraformApply
+      displayName: 'Apply Terraform Plan'
+      steps:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'current'
+            artifactName: 'tfplan'
+            targetPath: '$(Pipeline.Workspace)'
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            commandOptions: '-auto-approve tfplan'
