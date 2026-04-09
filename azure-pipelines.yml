@@ -76,29 +76,14 @@ stages:
             targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
             artifact: 'tfplan'
 
-# -------------------
-# Stage 3: Approval
-# -------------------
-- stage: Approval
-  displayName: 'Manual Approval Before Apply'
-  dependsOn: Plan
-  jobs:
-    - job: ApprovalGate
-      displayName: 'Approval'
-      steps:
-        - task: ManualValidation@1
-          inputs:
-            notifyUsers: 'aviinashdevops@outlook.com'
-            instructions: 'Approve to apply Terraform changes'
-            onTimeout: 'reject'
-            timeout: '43200'  # 12 hours max
+
 
 # -------------------
-# Stage 4: Apply
+# Stage 3: Apply
 # -------------------
 - stage: Apply
   displayName: 'Terraform Apply'
-  dependsOn: Approval
+  dependsOn: Plan
   jobs:
     - job: TerraformApply
       displayName: 'Apply Terraform Plan'
