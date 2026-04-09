@@ -16,10 +16,19 @@ variables:
   - group: INFRACOST_API_KEY
     
 stages:
-- stage: A
-  displayName: stage1
+- stage: Validate
+  displayName: 'Validate and Security Scan'
   pool: Default
   jobs: 
+  - job: TerraformValidate
+    steps:
+    - task: PowerShell@2
+      displayName: 'Terraform format Checker'
+      inputs:
+        targetType: 'inline'
+        script: 'terraform fmt -check -recursive $(System.DefaultWorkingDirectory)'
+      continueOnError: false
+
   - job: Terraform
     steps:
     - task: TerraformTaskV4@4
@@ -47,3 +56,5 @@ stages:
           .\infracost.exe --version
           $env:INFRACOST_API_KEY = "$(Infracostapitoken)"
           .\infracost.exe breakdown --path '$(WORK_DIR)' --format table
+
+       
