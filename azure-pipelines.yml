@@ -103,7 +103,7 @@ stages:
           inputs:
             buildType: 'current'
             artifactName: 'tfplan'
-            targetPath: '$(System.DefaultWorkingDirectory)'
+            targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
         - task: TerraformTask@5
           inputs:
             environmentServiceNameAzureRM: 'SVB'
