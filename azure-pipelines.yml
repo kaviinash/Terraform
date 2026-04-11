@@ -86,7 +86,14 @@ stages:
           inputs:
             targetPath: '$(Pipeline.Workspace)/plans'
             artifact: 'tfplan'
-
+    - job: ManualValidation
+      displayName: 'Manual Validation'
+      pool: Server # most important for agentless job
+      steps:
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: 'aviinashdevops@outlook.com'
+            approvers: 'aviinashdevops@outlook.com'
 
 
 # -------------------
