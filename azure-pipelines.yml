@@ -72,10 +72,7 @@ stages:
             command: 'plan'
             environmentServiceNameAzureRM: 'SVB'
             commandOptions: '-out=$(Pipeline.Workspace)/plans/tfplanfile'
-        - task: tfsec@1
-          inputs:
-            version: 'v1.26.0'
-            dir: '$(System.DefaultWorkingDirectory)'
+
         - task: PowerShell@2
           displayName: Run Infracost
           inputs:
